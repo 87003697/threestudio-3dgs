@@ -122,6 +122,10 @@ class DiffGaussian(Rasterizer, GaussianBatchRenderer):
             campos=viewpoint_camera.camera_center,
             prefiltered=False,
             debug=False,
+            # 
+            kernel_size=0.,  # cf. Mip-Splatting; not used
+            require_depth=True,
+            require_coord=False,
         )
 
         rasterizer = GaussianRasterizer(raster_settings=raster_settings)
@@ -154,8 +158,8 @@ class DiffGaussian(Rasterizer, GaussianBatchRenderer):
         # rays_d_flatten: Float[Tensor, "Nr 3"] = rays_d.unsqueeze(0)
 
         comp_rgb_bg = self.background(dirs=rays_d.unsqueeze(0))
-
-        rendered_image, radii, rendered_depth, rendered_alpha = rasterizer(
+    
+        rendered_image, radii, coord, mcoord, rendered_depth, mdepth, rendered_alpha, rendered_normal = rasterizer(
             means3D=means3D,
             means2D=means2D,
             shs=shs,
